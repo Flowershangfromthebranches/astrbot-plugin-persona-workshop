@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-import logging
+from astrbot.api import logger
 from collections.abc import Sequence
 from typing import Any
 
@@ -375,7 +375,7 @@ class PromptComposer:
             SceneRuntime.prompt_state(scene_state) if scene_state else "",
         ]
         system_prompt = "\n\n".join(s for s in system_sections if s)
-        logging.getLogger(__name__).debug(
+        logger.debug(
             "core_fidelity composed system_sha256=%s core_chars=%d implication_count=%d",
             hashlib.sha256(system_prompt.encode()).hexdigest(),
             len(identity_kernel_text),

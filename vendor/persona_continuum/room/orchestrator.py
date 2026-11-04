@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import json
-import logging
+from astrbot.api import logger as _metadata_trace_logger
 import os
 import re
 import time
@@ -169,7 +169,6 @@ _PROTECTED_METADATA_PREFIXES: tuple[str, ...] = ("rolling_summary", "raw_archive
 _METADATA_WRITE_TRACE = os.environ.get(
     "PERSONA_CONTINUUM_DEBUG_METADATA_WRITES", ""
 ).lower() in {"1", "true", "yes", "on"}
-_metadata_trace_logger = logging.getLogger("persona_continuum.room.metadata")
 
 
 def _protected_metadata_keys(metadata: dict[str, Any]) -> list[str]:

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import contextlib
 import json
-import logging
+from astrbot.api import logger
 from typing import TYPE_CHECKING, Any
 
 from persona_continuum.agent.adapter import AgentAdapter
@@ -33,7 +33,6 @@ from persona_continuum.world.models import (
 if TYPE_CHECKING:
     from persona_continuum.application.container import PersonaContinuum
 
-logger = logging.getLogger(__name__)
 
 
 class AgentRuntimeUnavailableError(RuntimeUnavailableError):

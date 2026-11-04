@@ -13,6 +13,7 @@ from astrbot import logger
 from astrbot.api.event import AstrMessageEvent, filter
 from astrbot.api.star import Context, Star, StarTools
 from astrbot.api.web import request
+from astrbot.core.agent.message import TextPart
 from astrbot.core.config.astrbot_config import AstrBotConfig
 
 from .generator import PersonaGenerationError, PersonaGenerator
@@ -723,6 +724,18 @@ class PersonaWorkshop(Star):
             logger.exception("[persona_workshop] persona_get_runtime_state 失败")
             return json.dumps({"ok": False, "error": str(exc)}, ensure_ascii=False)
 
+    def _append_dynamic_context(self, req, text: str) -> bool:
+        text = str(text or "").strip()
+        if not text:
+            return False
+        parts = list(getattr(req, "extra_user_content_parts", None) or [])
+        marker = "[persona_workshop_dynamic]"
+        if any(marker in str(getattr(part, "text", "") or "") for part in parts):
+            return True
+        parts.append(TextPart(text=text).mark_as_temp())
+        req.extra_user_content_parts = parts
+        return True
+
     @filter.on_llm_request(priority=-100000)
     async def room_runtime_request(self, event: AstrMessageEvent, req) -> None:
         if not self._bool("room_runtime_enabled", True):
@@ -742,16 +755,9 @@ class PersonaWorkshop(Star):
         existing_turn = self._pending_room_turns.get(id(event))
         if existing_turn is not None:
             try:
-                from .continuum_persona_renderer import replace_persona_section
-
-                updated, changed = replace_persona_section(
-                    str(getattr(req, "system_prompt", "") or ""),
-                    existing_turn["system_prompt"],
-                )
-                if changed:
-                    req.system_prompt = updated
+                self._append_dynamic_context(req, existing_turn.get("dynamic_context", ""))
             except Exception:
-                logger.exception("[persona_workshop] 复用 Room 动态人格失败")
+                logger.exception("[persona_workshop] 复用 Room 动态上下文失败")
             return
         try:
             manager = await self._get_room_runtime()
@@ -762,23 +768,19 @@ class PersonaWorkshop(Star):
                 str(event.unified_msg_origin),
                 user_message,
             )
-            system_prompt = str(getattr(req, "system_prompt", "") or "")
-            from .continuum_persona_renderer import replace_persona_section
-
-            updated, changed = replace_persona_section(system_prompt, turn["system_prompt"])
-            if not changed:
-                logger.warning("[persona_workshop] 未找到 Persona Instructions 段，保留静态人格")
+            if not self._append_dynamic_context(req, turn.get("dynamic_context", "")):
+                logger.warning("[persona_workshop] Room 动态上下文为空，保留静态人格")
                 return
-            req.system_prompt = updated
             self._pending_room_turns[id(event)] = turn
             logger.info(
-                "[persona_workshop] Room 动态人格已注入：persona=%s，memory=%s，room=%s",
+                "[persona_workshop] Room 动态上下文已注入：persona=%s，memory=%s，room=%s，chars=%s",
                 turn["persona_id"],
                 turn["memory_backend"],
                 turn["room_id"],
+                len(turn.get("dynamic_context", "")),
             )
         except Exception:
-            logger.exception("[persona_workshop] Room 动态人格准备失败，回退静态人格")
+            logger.exception("[persona_workshop] Room 动态上下文准备失败，回退静态人格")
             return
 
     @filter.on_agent_done(priority=-100000)

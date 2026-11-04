@@ -2,6 +2,8 @@
 
 一个把 persona-continuum 的人格制作与 Room 运行时嵌入 AstrBot 的插件。
 
+> 本仓库是完整版/本地自用版，保留可选的成人亲密模块；插件市场发行版请使用 `astrbot_plugin_persona_workshop` 仓库。
+
 插件不是简单地把几行提示词写进人格设定：它把 continuum 的结构化人格包、八维研究链路、动态 Room 上下文、关系/情绪状态、记忆后端、人格工具和可选静默会诊接入 AstrBot 的聊天流程。
 
 ## 功能
@@ -10,8 +12,12 @@
 - 使用 AstrBot 已配置的模型或本地 CLI 执行器制作人格
 - 保留 continuum 的制作链路：资料/文件、研究策略、八维 ResearchArtifact、审阅、编译
 - 人格保存后写入 AstrBot 原生人格，并可作为默认人格使用
+- 兼容 continuum 不同版本/不同模型产出的字段别名：
+  - 时间线、台词锚点、情绪触发、决策习惯、失败模式、身体信息等不会再因字段名不同而丢失
+  - 静态人格提示词与 Room 运行时共用同一套归一化结果
 - 使用 continuum 人格时，每轮消息走隐藏 Room/Session：
   - 动态注入身份内核、情绪、需求、目标、关系立场和行为约束
+  - 追加长期人格档案（身份、时间线、关系、表达习惯、台词锚点），避免 Room 丢掉静态设定
   - 回复后提交 affect / relationship / memory 状态
 - 自动检测 LivingMemory：
   - 有 LivingMemory 时，长期记忆由 LivingMemory 提供，避免重复注入
@@ -104,6 +110,7 @@ AstrBot 消息
 主要文件：
 
 - `main.py`：插件入口、Web API、人格工具、AstrBot hooks
+- `schema_compat.py`：continuum 产物字段归一化（静态提示词与 Room 共用）
 - `room_runtime.py`：隐藏 Room 会话、动态上下文、状态提交
 - `livingmemory_bridge.py`：LivingMemory 自动检测与检索
 - `consultation.py`：静默会诊

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import contextlib
-import logging
+from astrbot.api import logger as _metadata_trace_logger
 import math
 from collections.abc import Callable
 from datetime import UTC, datetime
@@ -51,7 +51,6 @@ from persona_continuum.security.validation import CodedError
 from persona_continuum.storage.database import Database
 from persona_continuum.utils import dumps, loads, new_id, parse_dt
 
-_metadata_trace_logger = logging.getLogger("persona_continuum.room.metadata")
 
 EVALUATION_CONTEXT_TAGS = frozenset(
     {

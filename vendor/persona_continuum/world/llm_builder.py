@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import logging
+from astrbot.api import logger
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
@@ -19,7 +19,6 @@ from persona_continuum.world.models import DivergenceItem, WorldSeed
 if TYPE_CHECKING:
     from persona_continuum.agent.adapter import AgentAdapter
 
-logger = logging.getLogger(__name__)
 
 
 WORLD_BUILDER_SYSTEM_PROMPT = """You are the World Builder Agent for Persona Continuum.

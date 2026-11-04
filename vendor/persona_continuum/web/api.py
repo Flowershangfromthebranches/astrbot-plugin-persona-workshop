@@ -4,7 +4,7 @@ import asyncio
 import contextlib
 import io
 import json
-import logging
+from astrbot.api import logger
 import re
 import zipfile
 from datetime import UTC, datetime
@@ -65,7 +65,6 @@ from persona_continuum.security.validation import (
     SecurityError,
 )
 
-logger = logging.getLogger(__name__)
 
 def json_ok(data: Any = None, status_code: int = 200) -> JSONResponse:
     return JSONResponse({"ok": True, "data": data}, status_code=status_code)

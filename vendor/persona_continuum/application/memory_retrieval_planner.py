@@ -19,7 +19,7 @@ Principles:
 
 from __future__ import annotations
 
-import logging
+from astrbot.api import logger as _logger
 import re
 import time
 from datetime import datetime
@@ -58,7 +58,6 @@ from persona_continuum.room.recall_gate import RecallAnalysisResult, RecallGate
 from persona_continuum.runtime.relationship_engine import RelationshipEngine
 from persona_continuum.storage.database import Database
 
-_logger = logging.getLogger(__name__)
 
 # Patterns signaling STANDARD memory expansion
 _PAST_PATTERNS = re.compile(

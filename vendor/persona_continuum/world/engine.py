@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
-import logging
+from astrbot.api import logger
 import re
 import time
 from typing import TYPE_CHECKING, Any
@@ -59,7 +59,6 @@ from persona_continuum.world.technology import TechnologyEvolutionModel
 if TYPE_CHECKING:
     from persona_continuum.application.container import PersonaContinuum
 
-logger = logging.getLogger(__name__)
 
 
 class ParallelWorldEngine:
