@@ -1,0 +1,8 @@
+name: astrbot_plugin_persona_workshop
+display_name: 人格工坊
+desc: 用 AstrBot 已配置的模型制作人格，生成后可编辑、保存并直接启用。
+help: 打开左侧“扩展功能 → 人格工坊”，填写角色资料生成人格；生成后可在人格库里设为默认人格。
+version: v0.1.0
+author: leaf
+support_platforms:
+  - aiocqhttp
